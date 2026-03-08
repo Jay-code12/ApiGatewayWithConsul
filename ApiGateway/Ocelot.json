@@ -1,0 +1,55 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:7106",
+    "ServiceDiscoveryProvider": {
+      "Type": "Consul",
+      "Host": "localhost",
+      "Port": 8500
+    }
+  },
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/Auth/{url}",
+      "DownstreamScheme": "http",
+      "ServiceName": "AuthService",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "UpstreamPathTemplate": "/api/Auth/{url}",
+      "UpstreamHttpMethod": [ "Post" ],
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "Period": "10s",
+        "Limit": 10,
+        "PeriodTimespan": 10,
+        "ClientIdHeader": "User-Agent"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/users/{url}",
+      "DownstreamScheme": "http",
+      "ServiceName": "UserService",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "UpstreamPathTemplate": "/api/users{url}",
+      "UpstreamHttpMethod": [ "Post","Get","Delete","Put" ],
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "Period": "10s",
+        "Limit": 10,
+        "PeriodTimespan": 10,
+        "ClientIdHeader": "User-Agent"
+      },
+      "FileCacheOptions": {
+        "TtlSeconds": 10
+      },
+      "RouteIsCaseSensitive": false,
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    }
+  ]
+
+}
